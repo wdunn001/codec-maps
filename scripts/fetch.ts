@@ -261,7 +261,11 @@ async function processModel(entry: (typeof MODELS)[number]) {
   // Write map file
   await fs.writeFile(outPath, json, 'utf-8');
   console.log(`  ✓ written  ${outPath}`);
-  console.log(`    vocab_size=${map.vocab_size}  tokens=${Object.keys(map.tokens).length}  hash=${hash}`);
+  console.log(
+    `    vocab_size=${map.vocab_size}  vocab=${Object.keys(map.vocab).length}` +
+      `  merges=${map.merges?.length ?? 0}  encoder=${map.encoder ?? 'identity'}` +
+      `  hash=${hash}`,
+  );
   if (map.byte_fallback_start !== undefined) {
     console.log(`    byte_fallback: ${map.byte_fallback_start}–${map.byte_fallback_end}`);
   }

@@ -85,7 +85,9 @@ for (const { url, mapId, aliases } of MIRRORS) {
     await fs.writeFile(outPath, json, 'utf-8');
     console.log(
       '  ✓ vocab_size=' + map.vocab_size +
-      '  tokens=' + Object.keys(map.tokens).length +
+      '  vocab=' + Object.keys(map.vocab).length +
+      '  merges=' + (map.merges?.length ?? 0) +
+      '  encoder=' + (map.encoder ?? 'identity') +
       '  hash=' + hash,
     );
     if (map.byte_fallback_start !== undefined) {

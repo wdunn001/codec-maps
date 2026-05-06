@@ -1,0 +1,16 @@
+{
+  "qwen/qwen2": "sha256:c73972f7a580936d724ffd8df9df2ce546d255c543e9d09b6d75e5bf69b1a64d",
+  "mistralai/mistral-v3": "sha256:43e80df87bdd70b8fafbc9f3bbc31d23e0e93f940b90626a8e7ea1d049cd17e3",
+  "mistralai/mistral-nemo": "sha256:99d1dc9fa8f2897d7eb93b0e0c68740bf39f1a9f94d274c7df4727d32fca7e37",
+  "mistralai/mixtral": "sha256:c3cb8ac2c5a83c0546d76b5f2a675d6702dc0638795ed844ae89987349fdac34",
+  "microsoft/phi-3": "sha256:224cecdb73a0c4c758e86009c6e0b44e8d7111b3f794f4f2afb7b5075fafa757",
+  "microsoft/phi-4": "sha256:ad8c6b5ed119f326c88cddcda5f4edf4fe7896ea196f638ebf9f150cd16d6a68",
+  "deepseek-ai/deepseek-v3": "sha256:5a3c5570eb513161c2323d80ebdd05cffd603dfea9448123a99cf4de5ffec304",
+  "tiiuae/falcon": "sha256:d31cf88558114dfc4eab2f8e189884de6209d1f70ec6948842f8524c3bd144a0",
+  "mistralai/codestral": "sha256:9a270b733ff933ed8d94bdb6e50fc36bf3d61440761c1e3e45d98f88253a891a",
+  "huggingfacetb/smollm2": "sha256:5ce51100a1870614e91f2fd5fdd0a91051f38a784cdbbcc05a575efd8d0bc2cc",
+  "meta-llama/llama-3": "sha256:43b3332b1a40537fee449506bccb3d9875c1a4e8d8c184fdd7814c33f06f3718",
+  "meta-llama/llama-2": "sha256:cc0bd438afd1dc177b9922da75b4de76a369993583fec6c0731a7a52256014be",
+  "google/gemma-2": "sha256:b4ac52efeef2bd46ba3283284c5dae4e69d914a0559d9f8471cf27db624c7773",
+  "google/gemma-1": "sha256:ac64d0f06d7dc28a09545bfa0e659ddbb9c3b9bb3db2be573b715076014862cc"
+}

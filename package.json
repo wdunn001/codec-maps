@@ -1,0 +1,17 @@
+{
+  "name": "codec-maps",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch": "node --import tsx/esm scripts/fetch.ts",
+    "validate": "node --import tsx/esm scripts/validate.ts"
+  },
+  "dependencies": {
+    "@codecai/web": "^0.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

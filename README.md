@@ -46,7 +46,7 @@ import { loadMap, Detokenizer, decodeStream } from '@codecai/web';
 
 const map = await loadMap({
   url:  'https://cdn.jsdelivr.net/gh/wdunn001/codec-maps/maps/qwen/qwen2.json',
-  hash: 'sha256:c73972f7a580…',  // from index.json
+  hash: 'sha256:887311099cdc09e7022001a01fa1da396750d669b7ed2c242a000b9badd09791',  // from index.json
 });
 
 const detok = new Detokenizer(map);

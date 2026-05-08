@@ -218,6 +218,25 @@ async function fetchTokenizerJson(hfId: string): Promise<unknown> {
   return resp.json();
 }
 
+/**
+ * Best-effort fetch of `tokenizer_config.json`. The chat_template lives
+ * here (not in tokenizer.json) and we need it to derive the
+ * `tool_calling` block. A 404 is not an error — we proceed without
+ * and the map simply omits the block.
+ */
+async function fetchTokenizerConfig(hfId: string): Promise<unknown | undefined> {
+  const url = `${HF_BASE}/${hfId}/resolve/main/tokenizer_config.json`;
+  try {
+    const resp = await fetch(url, {
+      headers: { 'User-Agent': 'codecai-maps/0.1 (+https://github.com/wdunn001/Codec)' },
+    });
+    if (!resp.ok) return undefined;
+    return await resp.json();
+  } catch {
+    return undefined;
+  }
+}
+
 async function sha256(data: string): Promise<string> {
   const bytes = Buffer.from(data);
   const hash = crypto.createHash('sha256').update(bytes).digest('hex');
@@ -246,10 +265,18 @@ async function processModel(entry: (typeof MODELS)[number]) {
     return null;
   }
 
+  // Fetch tokenizer_config.json best-effort — needed to derive the
+  // tool_calling block from the chat template signature.
+  const tokenizerConfig = await fetchTokenizerConfig(hfId);
+
   // Convert
   let map: ReturnType<typeof convert>;
   try {
-    map = convert(hfJson as Parameters<typeof convert>[0], mapId);
+    map = convert(
+      hfJson as Parameters<typeof convert>[0],
+      mapId,
+      tokenizerConfig as Parameters<typeof convert>[2],
+    );
   } catch (err) {
     console.error(`  ✗ conversion failed: ${err}`);
     return null;
@@ -269,6 +296,9 @@ async function processModel(entry: (typeof MODELS)[number]) {
   if (map.byte_fallback_start !== undefined) {
     console.log(`    byte_fallback: ${map.byte_fallback_start}–${map.byte_fallback_end}`);
   }
+  console.log(
+    `    tool_calling: ${map.tool_calling ? map.tool_calling.convention : 'omitted'}`,
+  );
 
   return { mapId, hash, aliases };
 }

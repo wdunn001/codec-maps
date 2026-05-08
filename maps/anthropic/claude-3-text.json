@@ -1,0 +1,9 @@
+{
+  "id": "anthropic/claude-3-text",
+  "version": "2",
+  "vocab_size": 1,
+  "vocab": { "<|placeholder|>": 0 },
+  "_synthetic": true,
+  "_note": "Synthetic identity map for Anthropic Claude (3.x / 3.5 / 4 / 4.5 / 4.7). Anthropic does NOT publish their tokenizer for Claude 3+ models — there is no public BPE artifact, no tokenizer.json, and the count_tokens API returns counts not IDs. This map is intentionally empty: the `encoder` field is omitted, the vocab is empty, and there are no merges. Per spec/PROTOCOL.md, an omitted encoder means vocab keys are decoded text (identity tokenization), and an empty vocab means the BPE / longest-match paths have nothing to do. The Detokenizer falls through to a no-op pass-through. Codec features that do NOT depend on token IDs continue to work — the msgpack vs JSON wire layer, gzip/brotli/zstd compression negotiation, and the gateway's request-shape framing all operate at the JSON-RPC envelope level and do not require a vocabulary. Codec features that DO depend on token IDs (cross-vocab Translator, leaf-mode tokenization in MCP tools, agent-to-agent ID streams without re-tokenize, engine-direct ingest) cannot work for Claude until / unless Anthropic publishes a tokenizer. Operators pointing BENCH_MCP_MAP_URL or X-Codec-Map at this map get the wire-format compression layer with zero vocab-side coupling. The bench measurements you'll see are ~3.6× on tools/list (the same as a real-vocab map) because the compression headlines come from the framing layer, not from tokenizing the tool result text content. Aliases: every Claude 3+ model points here. Replace this map with a derived one if Anthropic ever publishes their tokenizer.",
+  "published_at": "2026-05-08T22:30:00Z"
+}

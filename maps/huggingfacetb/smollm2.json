@@ -98060,6 +98060,42 @@
     "ĠM ama",
     "ect able"
   ],
+  "pre_tokenizer_pattern": "'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+",
+  "pre_tokenizer_program": {
+    "version": 1,
+    "ops": [
+      {
+        "op": "literals",
+        "patterns": [
+          "'s",
+          "'t",
+          "'re",
+          "'ve",
+          "'m",
+          "'ll",
+          "'d"
+        ]
+      },
+      {
+        "op": "letters",
+        "lead_space": true
+      },
+      {
+        "op": "numbers",
+        "max_run": 1
+      },
+      {
+        "op": "punct_run",
+        "lead_space": true
+      },
+      {
+        "op": "trailing_ws"
+      },
+      {
+        "op": "ws_run"
+      }
+    ]
+  },
   "special_tokens": {
     "<|endoftext|>": 0,
     "<|im_start|>": 1,

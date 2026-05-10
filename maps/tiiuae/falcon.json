@@ -129816,7 +129816,42 @@
     "ler weile",
     "Ġvict oria"
   ],
-  "pre_tokenizer_pattern": "[0-9][0-9][0-9]",
+  "pre_tokenizer_pattern": "'s|'t|'re|'ve|'m|'ll|'d| ?\\p{L}+| ?\\p{N}{1,3}| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+",
+  "pre_tokenizer_program": {
+    "version": 1,
+    "ops": [
+      {
+        "op": "literals",
+        "patterns": [
+          "'s",
+          "'t",
+          "'re",
+          "'ve",
+          "'m",
+          "'ll",
+          "'d"
+        ]
+      },
+      {
+        "op": "letters",
+        "lead_space": true
+      },
+      {
+        "op": "numbers",
+        "max_run": 3
+      },
+      {
+        "op": "punct_run",
+        "lead_space": true
+      },
+      {
+        "op": "trailing_ws"
+      },
+      {
+        "op": "ws_run"
+      }
+    ]
+  },
   "special_tokens": {
     ">>TITLE<<": 0,
     ">>ABSTRACT<<": 1,

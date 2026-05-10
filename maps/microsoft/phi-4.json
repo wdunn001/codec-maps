@@ -200361,6 +200361,45 @@
     "ĠCon veyor"
   ],
   "pre_tokenizer_pattern": "(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?\\p{L}+|\\p{N}{1,3}| ?[^\\s\\p{L}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+",
+  "pre_tokenizer_program": {
+    "version": 1,
+    "ops": [
+      {
+        "op": "literals_ci",
+        "patterns": [
+          "'s",
+          "'t",
+          "'re",
+          "'ve",
+          "'m",
+          "'ll",
+          "'d"
+        ]
+      },
+      {
+        "op": "letters",
+        "lead_other": true
+      },
+      {
+        "op": "numbers",
+        "max_run": 3
+      },
+      {
+        "op": "punct_run",
+        "lead_space": true,
+        "trailing_newlines": true
+      },
+      {
+        "op": "newline_block"
+      },
+      {
+        "op": "trailing_ws"
+      },
+      {
+        "op": "ws_run"
+      }
+    ]
+  },
   "special_tokens": {
     "<|dummy_0|>": 100256,
     "<|endoftext|>": 100257,

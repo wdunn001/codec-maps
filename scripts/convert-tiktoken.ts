@@ -208,39 +208,65 @@ function base64Decode(b64: string): Uint8Array {
  * lets the encoder re-derive merges at training/inference time. We need
  * the merge list explicitly for Codec's BPETokenizer.
  *
- * Algorithm: for each multi-character token in rank order, find the
- * unique split (left, right) where both halves exist in the vocab with
- * lower rank. When multiple splits qualify, pick the one whose
- * higher-ranked half is lowest — the BPE step that actually produced
- * this token would have been the lowest-rank pair available at that
- * step.
+ * Algorithm (Karpathy / Xenova-style): for each multi-byte token in
+ * rank order, simulate greedy-pair BPE on its initial bytes, allowing
+ * only merges with rank STRICTLY LESS than this token's rank. Greedy
+ * BPE will reduce the sequence to two pieces (left, right); those two
+ * are the merge that produces this token. Emit `"<left> <right>"`.
+ *
+ * The previous implementation picked the split minimizing
+ * `max(rank(left), rank(right))` directly — which produces a split
+ * that's correct by token-decomposition but is NOT necessarily
+ * reachable by greedy BPE from the initial bytes. The greedy
+ * encoder applies merges in priority order; if the token's "true"
+ * split is unreachable from the greedy path, BPE stops short and the
+ * vocab token is never produced. This was the bug behind
+ * `BPETokenizer("Hello")` returning `["H", "ello"]` instead of
+ * `["Hello"]` on `openai/o200k_base` — the stored merge was
+ * `"Hel lo"` (which `max(rank)` minimised) but greedy BPE reaches
+ * `["H", "ello"]` and stops because no `"H ello"` merge exists in
+ * the table.
  *
  * The resulting merge list is correct for inference (the BPETokenizer's
- * encode loop produces the same token IDs as tiktoken). The order of
- * the list matches rank order, which is also the priority order for
- * BPETokenizer's greedy merge pass.
+ * encode loop produces the same token IDs as tiktoken and HuggingFace).
+ * The order of the list matches rank order, which is also the priority
+ * order for BPETokenizer's greedy merge pass.
  */
 export function deriveMergesFromRanks(vocab: Map<string, number>): string[] {
   const sorted = [...vocab.entries()].sort((a, b) => a[1] - b[1]);
   const merges: string[] = [];
   for (const [token, rank] of sorted) {
     if (token.length < 2) continue;  // base byte
-    let best: [string, string] | null = null;
-    let bestPairRank = Infinity;
-    for (let i = 1; i < token.length; i++) {
-      const left = token.slice(0, i);
-      const right = token.slice(i);
-      const lr = vocab.get(left);
-      const rr = vocab.get(right);
-      if (lr === undefined || rr === undefined) continue;
-      if (lr >= rank || rr >= rank) continue;
-      const pairRank = Math.max(lr, rr);
-      if (pairRank < bestPairRank) {
-        best = [left, right];
-        bestPairRank = pairRank;
+
+    // Simulate greedy BPE on this token's chars, allowing only merges
+    // with rank strictly less than the current token's rank. Greedy
+    // converges to a 2-element list whose join is the token; that pair
+    // is the merge we need to emit.
+    let parts: string[] = [...token];
+    while (parts.length > 1) {
+      let bestIdx = -1;
+      let bestRank = rank; // exclusive upper bound
+      for (let i = 0; i < parts.length - 1; i++) {
+        const r = vocab.get(parts[i]! + parts[i + 1]!);
+        if (r !== undefined && r < bestRank) {
+          bestRank = r;
+          bestIdx = i;
+        }
       }
+      if (bestIdx < 0) break;
+      parts = [
+        ...parts.slice(0, bestIdx),
+        parts[bestIdx]! + parts[bestIdx + 1]!,
+        ...parts.slice(bestIdx + 2),
+      ];
     }
-    if (best) merges.push(`${best[0]} ${best[1]}`);
+
+    if (parts.length === 2) {
+      merges.push(`${parts[0]} ${parts[1]}`);
+    }
+    // If parts.length > 2, this token is unreachable via greedy BPE on
+    // the vocab as-is — would be a tiktoken-side inconsistency. Skip
+    // rather than emit a wrong merge.
   }
   return merges;
 }

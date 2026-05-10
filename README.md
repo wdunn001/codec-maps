@@ -214,6 +214,20 @@ overwrite would silently break every consumer.
 - **vLLM PR**: https://github.com/vllm-project/vllm/pull/41765
 - **SGLang PR**: https://github.com/sgl-project/sglang/pull/24483
 
+### A note on safety policies (v0.4)
+
+This registry hosts **tokenizer maps** at
+`/.well-known/codec/maps/<id>.json`. The v0.4 safety-policy
+negotiation adds a *separate* descriptor type at
+`/.well-known/codec/policies/<id>.json` — see
+[`spec/versions/v0.4.md`](https://github.com/wdunn001/Codec/blob/main/spec/versions/v0.4.md#safety-policy-negotiation)
+and [`spec/safety-policy.schema.json`](https://github.com/wdunn001/Codec/blob/main/spec/safety-policy.schema.json).
+Safety policies are operator-published, not community-curated, so
+there's no `codec-policies` repo analogous to this one — each
+operator hosts their own under their own origin. Tokenizer maps in
+this repo are unaffected by v0.4 (the schema is unchanged; v0.4 is
+wire-additive over v0.3).
+
 ## License
 
 Maps in this repo are derived from each model's tokenizer file and inherit
